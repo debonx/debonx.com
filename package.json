@@ -8,7 +8,7 @@
   "license": "MIT",
   "packageManager": "pnpm@10.11.1",
   "engines": {
-    "node": ">=18"
+    "node": ">=21"
   },
   "type": "module",
   "scripts": {
@@ -69,7 +69,8 @@
     "eslint": "^9.35.0",
     "npm-run-all2": "^8.0.4",
     "prettier": "^3.6.2",
-    "typescript": "^5.9.2"
+    "typescript": "^5.9.2",
+    "sharp": "^0.34.4"
   },
   "overrides": {
     "cacheable-request": {
