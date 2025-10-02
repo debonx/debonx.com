@@ -14,7 +14,7 @@ export default siteConfig({
   author: 'debonx',
 
   // open graph metadata (optional)
-  description: 'Some engineering and management',
+  description: 'Hey I am Emanuele, a software engineer, tech lead and engineering manager, currently working at adidas International.',
 
   // social usernames (optional)
   twitter: 'debonx',
@@ -44,7 +44,7 @@ export default siteConfig({
   //
   pageUrlOverrides: {
     '/': '067dd719a912471ea9a3ac10710e7fdf',
-    '/about': '0be6efce9daf42688f65c76b89f8eb27'
+    '/blog': '0be6efce9daf42688f65c76b89f8eb27'
   },
   // pageUrlOverrides: null,
 
@@ -53,8 +53,9 @@ export default siteConfig({
   navigationStyle: 'custom',
   navigationLinks: [
     {
-      title: 'About',
-      pageId: '1cd8253b97ca80bab462d63e6e295aca'
+      title: 'Blog',
+      pageId: '1cd8253b97ca80bab462d63e6e295aca',
+      url: '/blog'
     }
   ]
 })
