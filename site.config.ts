@@ -14,7 +14,8 @@ export default siteConfig({
   author: 'debonx',
 
   // open graph metadata (optional)
-  description: 'Hey I am Emanuele, a software engineer, tech lead and engineering manager, currently working at adidas International.',
+  description:
+    'Hey I am Emanuele, a software engineer, tech lead and engineering manager, currently working at adidas International.',
 
   // social usernames (optional)
   twitter: 'debonx',
