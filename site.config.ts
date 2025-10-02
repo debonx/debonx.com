@@ -45,7 +45,7 @@ export default siteConfig({
   //
   pageUrlOverrides: {
     '/': '067dd719a912471ea9a3ac10710e7fdf',
-    '/blog': '0be6efce9daf42688f65c76b89f8eb27'
+    '/blog': '1cd8253b97ca80bab462d63e6e295aca'
   },
   // pageUrlOverrides: null,
 
@@ -55,8 +55,7 @@ export default siteConfig({
   navigationLinks: [
     {
       title: 'Blog',
-      pageId: '1cd8253b97ca80bab462d63e6e295aca',
-      url: '/blog'
+      pageId: '1cd8253b97ca80bab462d63e6e295aca'
     }
   ]
 })
