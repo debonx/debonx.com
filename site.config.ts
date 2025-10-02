@@ -18,7 +18,7 @@ export default siteConfig({
     'Hey I am Emanuele, a software engineer, tech lead and engineering manager, currently working at adidas International.',
 
   // social usernames (optional)
-  twitter: 'debonx',
+  twitter: 'debonx_',
   github: 'debonx',
   linkedin: 'emanueledeboni',
   // mastodon: '#', // optional mastodon profile URL, provides link verification
