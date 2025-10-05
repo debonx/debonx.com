@@ -1,7 +1,7 @@
 
 # debonx.com
 
-Hey there, this is the code of my personal blog, built with [Travis Fischer](https://transitivebullsh.it).
+Hey, this is the code of my personal blog, built with [nextjs-notion-starter-kit](https://github.com/transitive-bullshit/nextjs-notion-starter-kit), from [Travis Fischer](https://transitivebullsh.it/).
 
 If you don't know, it's an incredible starter kit for building websites with Next.js and Notion.
 
