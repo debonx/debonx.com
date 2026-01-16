@@ -1,4 +1,4 @@
-import { getAllPagesInSpace, getPageProperty, uuidToId } from 'notion-utils'
+import { getAllPagesInSpace, getPageProperty, getPageTitle, uuidToId } from 'notion-utils'
 import pMemoize from 'p-memoize'
 
 import type * as types from './types'
@@ -64,6 +64,11 @@ async function getAllPagesImpl(
       if (
         !(getPageProperty<boolean | null>('Public', block!, recordMap) ?? true)
       ) {
+        return map
+      }
+
+      const title = getPageTitle(recordMap)
+      if (title && title.toLowerCase().includes('[draft]')) {
         return map
       }
 
