@@ -36,12 +36,13 @@ export async function getStaticPaths() {
 
   // Combine sitemap paths with URL overrides (e.g., /articles, /notes)
   // URL overrides might not be in the sitemap if not directly linked from root
+  // Filter out empty strings and root path '/' since those are handled by index.tsx
   const allPageIds = [
     ...new Set([
       ...Object.keys(siteMap.canonicalPageMap),
-      ...Object.keys(pageUrlOverrides)
+      ...Object.keys(pageUrlOverrides).map((path) => path.replace(/^\//, ''))
     ])
-  ]
+  ].filter((pageId) => pageId && pageId.length > 0)
 
   const staticPaths = {
     paths: allPageIds.map((pageId) => ({ params: { pageId } })),

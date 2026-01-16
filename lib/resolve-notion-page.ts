@@ -1,5 +1,5 @@
 import { type ExtendedRecordMap } from 'notion-types'
-import { parsePageId } from 'notion-utils'
+import { getBlockTitle, getPageTitle, parsePageId } from 'notion-utils'
 
 import type { PageProps } from './types'
 import * as acl from './acl'
@@ -7,6 +7,65 @@ import { environment, pageUrlAdditions, pageUrlOverrides, site } from './config'
 import { db } from './db'
 import { getSiteMap } from './get-site-map'
 import { getPage } from './notion'
+
+// Helper to check if a block links to a draft page
+function isDraftPageBlock(
+  blockId: string,
+  recordMap: ExtendedRecordMap
+): boolean {
+  const block = recordMap.block[blockId]?.value
+  if (!block) return false
+
+  // Check if it's a page block or a link to a page
+  if (block.type === 'page' || block.type === 'alias') {
+    const title = getBlockTitle(block, recordMap)
+    return title ? title.toLowerCase().includes('[draft]') : false
+  }
+
+  return false
+}
+
+// Filter out draft page blocks from the recordMap
+function filterDraftPages(recordMap: ExtendedRecordMap): ExtendedRecordMap {
+  const filteredBlocks: typeof recordMap.block = {}
+  const draftBlockIds = new Set<string>()
+
+  // First pass: identify draft page blocks
+  for (const [blockId, _] of Object.entries(recordMap.block)) {
+    if (isDraftPageBlock(blockId, recordMap)) {
+      draftBlockIds.add(blockId)
+    }
+  }
+
+  // Second pass: copy non-draft blocks and filter content arrays
+  for (const [blockId, blockData] of Object.entries(recordMap.block)) {
+    if (draftBlockIds.has(blockId)) {
+      continue // Skip draft blocks entirely
+    }
+
+    // Clone the block and filter out draft references from content
+    const block = blockData?.value
+    if (block?.content) {
+      const filteredContent = block.content.filter(
+        (childId: string) => !draftBlockIds.has(childId)
+      )
+      filteredBlocks[blockId] = {
+        ...blockData,
+        value: {
+          ...block,
+          content: filteredContent
+        }
+      }
+    } else {
+      filteredBlocks[blockId] = blockData
+    }
+  }
+
+  return {
+    ...recordMap,
+    block: filteredBlocks
+  }
+}
 
 export async function resolveNotionPage(
   domain: string,
@@ -90,6 +149,20 @@ export async function resolveNotionPage(
     recordMap = await getPage(pageId)
   }
 
-  const props: PageProps = { site, recordMap, pageId }
+  // Block access to pages with "[draft]" in the title (case-insensitive)
+  const title = getPageTitle(recordMap)
+  if (title && title.toLowerCase().includes('[draft]')) {
+    return {
+      error: {
+        message: `Not found "${rawPageId}"`,
+        statusCode: 404
+      }
+    }
+  }
+
+  // Filter out draft page blocks from the content
+  const filteredRecordMap = filterDraftPages(recordMap)
+
+  const props: PageProps = { site, recordMap: filteredRecordMap, pageId }
   return { ...props, ...(await acl.pageAcl(props)) }
 }

@@ -1,4 +1,4 @@
-import { getAllPagesInSpace, getPageProperty, uuidToId } from 'notion-utils'
+import { getAllPagesInSpace, getPageProperty, getPageTitle, uuidToId } from 'notion-utils'
 import pMemoize from 'p-memoize'
 
 import type * as types from './types'
@@ -67,9 +67,19 @@ async function getAllPagesImpl(
         return map
       }
 
+      const title = getPageTitle(recordMap)
+      if (title && title.toLowerCase().includes('[draft]')) {
+        return map
+      }
+
       const canonicalPageId = getCanonicalPageId(pageId, recordMap, {
         uuid
-      })!
+      })
+
+      // Skip pages with empty or invalid canonical IDs
+      if (!canonicalPageId) {
+        return map
+      }
 
       if (map[canonicalPageId]) {
         // you can have multiple pages in different collections that have the same id
