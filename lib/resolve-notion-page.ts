@@ -5,6 +5,7 @@ import type { PageProps } from './types'
 import * as acl from './acl'
 import { environment, pageUrlAdditions, pageUrlOverrides, site } from './config'
 import { db } from './db'
+import { getCanonicalPageId } from './get-canonical-page-id'
 import { getSiteMap } from './get-site-map'
 import { getPage } from './notion'
 
@@ -90,9 +91,8 @@ export async function resolveNotionPage(
 
     const useUriToPageIdCache = true
     const cacheKey = `uri-to-page-id:${domain}:${environment}:${rawPageId}`
-    // TODO: should we use a TTL for these mappings or make them permanent?
-    // const cacheTTL = 8.64e7 // one day in milliseconds
-    const cacheTTL = undefined // disable cache TTL
+    // Use a TTL so stale slug→pageId mappings expire when page titles change
+    const cacheTTL = 8.64e7 // one day in milliseconds
 
     if (!pageId && useUriToPageIdCache) {
       try {
@@ -113,6 +113,28 @@ export async function resolveNotionPage(
       // e.g., /developer-x-entrepreneur versus /71201624b204481f862630ea25ce62fe
       const siteMap = await getSiteMap()
       pageId = siteMap?.canonicalPageMap[rawPageId]
+
+      if (!pageId) {
+        // Fallback: the slug wasn't found directly in canonicalPageMap.
+        // This can happen when the page title changed (so the slug changed)
+        // or the page is deeper than the sitemap traversal depth.
+        // Try a reverse lookup: iterate all pages and regenerate their
+        // canonical slug to find a match.
+        for (const [candidatePageId, candidateRecordMap] of Object.entries(
+          siteMap.pageMap
+        )) {
+          if (!candidateRecordMap) continue
+          const candidateSlug = getCanonicalPageId(
+            candidatePageId,
+            candidateRecordMap,
+            { uuid: false }
+          )
+          if (candidateSlug === rawPageId) {
+            pageId = candidatePageId
+            break
+          }
+        }
+      }
 
       if (pageId) {
         // TODO: we're not re-using the page recordMap from siteMaps because it is
