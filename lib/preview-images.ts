@@ -1,3 +1,4 @@
+import ExpiryMap from 'expiry-map'
 import ky from 'ky'
 import lqip from 'lqip-modern'
 import {
@@ -77,4 +78,6 @@ async function createPreviewImage(
   }
 }
 
-export const getPreviewImage = pMemoize(createPreviewImage)
+export const getPreviewImage = pMemoize(createPreviewImage, {
+  cache: new ExpiryMap(300_000) // 5 minutes
+})

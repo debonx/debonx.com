@@ -1,3 +1,4 @@
+import ExpiryMap from 'expiry-map'
 import { getAllPagesInSpace, getPageProperty, getPageTitle, uuidToId } from 'notion-utils'
 import pMemoize from 'p-memoize'
 
@@ -21,8 +22,11 @@ export async function getSiteMap(): Promise<types.SiteMap> {
   } as types.SiteMap
 }
 
+// Cache the sitemap for 2 minutes so title/slug changes are picked up
+// without hammering the Notion API on every request.
 const getAllPages = pMemoize(getAllPagesImpl, {
-  cacheKey: (...args) => JSON.stringify(args)
+  cacheKey: (...args) => JSON.stringify(args),
+  cache: new ExpiryMap(120_000)
 })
 
 const getPage = async (pageId: string, opts?: any) => {
@@ -39,7 +43,7 @@ async function getAllPagesImpl(
   rootNotionPageId: string,
   rootNotionSpaceId?: string,
   {
-    maxDepth = 1
+    maxDepth = 3
   }: {
     maxDepth?: number
   } = {}

@@ -1,3 +1,4 @@
+import ExpiryMap from 'expiry-map'
 import {
   type ExtendedRecordMap,
   type SearchParams,
@@ -39,6 +40,9 @@ const getNavigationLinkPages = pMemoize(
     }
 
     return []
+  },
+  {
+    cache: new ExpiryMap(120_000) // 2 minutes
   }
 )
 

@@ -1,3 +1,4 @@
+import ExpiryMap from 'expiry-map'
 import { type ExtendedRecordMap } from 'notion-types'
 import { getPageTweetIds } from 'notion-utils'
 import pMap from 'p-map'
@@ -59,4 +60,6 @@ async function getTweetImpl(tweetId: string): Promise<any> {
   }
 }
 
-export const getTweet = pMemoize(getTweetImpl)
+export const getTweet = pMemoize(getTweetImpl, {
+  cache: new ExpiryMap(300_000) // 5 minutes
+})
