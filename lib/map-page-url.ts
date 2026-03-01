@@ -1,5 +1,5 @@
 import { type ExtendedRecordMap } from 'notion-types'
-import { getBlockTitle, parsePageId, uuidToId } from 'notion-utils'
+import { getBlockTitle, getBlockValue, parsePageId, uuidToId } from 'notion-utils'
 
 import { includeNotionIdInUrls } from './config'
 import { getCanonicalPageId } from './get-canonical-page-id'
@@ -14,7 +14,7 @@ function isDraftPage(pageId: string, recordMap: ExtendedRecordMap): boolean {
   const pageUuid = parsePageId(pageId, { uuid: true })
   if (!pageUuid) return false
 
-  const block = recordMap.block[pageUuid]?.value
+  const block = getBlockValue(recordMap.block[pageUuid])
   if (!block) return false
 
   const title = getBlockTitle(block, recordMap)

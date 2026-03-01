@@ -1,5 +1,5 @@
 import ExpiryMap from 'expiry-map'
-import { getAllPagesInSpace, getPageProperty, getPageTitle, uuidToId } from 'notion-utils'
+import { getAllPagesInSpace, getPageProperty, getPageTitle, uuidToId, getBlockValue } from 'notion-utils'
 import pMemoize from 'p-memoize'
 
 import type * as types from './types'

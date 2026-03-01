@@ -1,5 +1,5 @@
 import { type ExtendedRecordMap } from 'notion-types'
-import { getBlockTitle, getPageTitle, parsePageId } from 'notion-utils'
+import { getBlockTitle, getBlockValue, getPageTitle, parsePageId } from 'notion-utils'
 
 import type { PageProps } from './types'
 import * as acl from './acl'
@@ -14,7 +14,7 @@ function isDraftPageBlock(
   blockId: string,
   recordMap: ExtendedRecordMap
 ): boolean {
-  const block = recordMap.block[blockId]?.value
+  const block = getBlockValue(recordMap.block[blockId])
   if (!block) return false
 
   // Check if it's a page block or a link to a page
@@ -45,7 +45,7 @@ function filterDraftPages(recordMap: ExtendedRecordMap): ExtendedRecordMap {
     }
 
     // Clone the block and filter out draft references from content
-    const block = blockData?.value
+    const block = getBlockValue(blockData)
     if (block?.content) {
       const filteredContent = block.content.filter(
         (childId: string) => !draftBlockIds.has(childId)
